@@ -41,8 +41,8 @@ final class MovieQuizViewController: UIViewController {
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
-    @IBOutlet weak var noButton: UIButton!
-    @IBOutlet weak var yesButton: UIButton!
+    @IBOutlet private weak var noButton: UIButton!
+    @IBOutlet private weak var yesButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,9 +64,6 @@ final class MovieQuizViewController: UIViewController {
     }
     
     private func showAnswerResult(isCorrect: Bool) {
-        //глобально, в приложении есть баг: если быстро нажимать на кнопку "Да", то можно пройти игру без ошибок
-        //это происходит потому что первые вопросы имеют ответ да, и инкрементирование счетчика происходит быстрее чем переключение вопросов (там ожидание в 1 сек)
-        //ну у меня возникла идея, пока вопрос не переключился - блокировать кнопки. Лучше чем это пока не придумал)
         noButton.isEnabled = false
         yesButton.isEnabled = false
         imageView.layer.masksToBounds = true
@@ -75,7 +72,8 @@ final class MovieQuizViewController: UIViewController {
         imageView.layer.cornerRadius = 20
         correctAnswers = correctAnswers + (isCorrect ? 1 : 0)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self else { return }
             self.showNextQuestionOrResults()
             self.noButton.isEnabled = true
             self.yesButton.isEnabled = true
@@ -111,7 +109,8 @@ final class MovieQuizViewController: UIViewController {
     
     private func show(quiz result: QuizResultsViewModel) {
         let alert = UIAlertController(title:result.title, message: result.text, preferredStyle: .alert)
-        let action = UIAlertAction(title: result.buttonText, style: .default) { _ in
+        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
+            guard let self else { return }
             self.currentQuestionIndex = 0
             self.correctAnswers = 0
             self.showQuestion()
