@@ -1,6 +1,7 @@
 import Foundation
 
 class QuestionFactory: QuestionFactoryProtocol {
+    weak var delegate: QuestionFactoryDelegate?
 
     private let questionsMock: [QuizQuestion] = [
         QuizQuestion(image: "The Godfather", text: "Рейтинг этого фильма больше чем 6?", correctAnswer: true),
@@ -15,7 +16,7 @@ class QuestionFactory: QuestionFactoryProtocol {
         QuizQuestion(image: "Vivarium", text: "Рейтинг этого фильма больше чем 6?", correctAnswer: false)
     ]
     
-    func requestNextQuestion() -> QuizQuestion? {
-        questionsMock.randomElement()
+    func requestNextQuestion() {
+        delegate?.didReceiveNextQuestion(question: questionsMock.randomElement())
     }
 }
