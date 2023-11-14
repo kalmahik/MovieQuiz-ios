@@ -1,43 +1,13 @@
 import UIKit
 
-private struct QuizStepViewModel {
-  let image: UIImage
-  let question: String
-  let questionNumber: String
-}
-
-private struct QuizResultsViewModel {
-  let title: String
-  let text: String
-  let buttonText: String
-}
-
-private struct QuizQuestion {
-  let image: String
-  let text: String
-  let correctAnswer: Bool
-}
-
-private let question = "Рейтинг этого фильма больше чем 6?"
-
-private let questionsMock: [QuizQuestion] = [
-    QuizQuestion(image: "The Godfather", text: question, correctAnswer: true),
-    QuizQuestion(image: "The Dark Knight", text: question, correctAnswer: true),
-    QuizQuestion(image: "Kill Bill", text: question, correctAnswer: true),
-    QuizQuestion(image: "The Avengers", text: question, correctAnswer: true),
-    QuizQuestion(image: "Deadpool", text: question, correctAnswer: true),
-    QuizQuestion(image: "The Green Knight", text: question, correctAnswer: true),
-    QuizQuestion(image: "Old", text: question, correctAnswer: false),
-    QuizQuestion(image: "The Ice Age Adventures of Buck Wild", text: question, correctAnswer: false),
-    QuizQuestion(image: "Tesla", text: question, correctAnswer: false),
-    QuizQuestion(image: "Vivarium", text: question, correctAnswer: false)
-]
 
 final class MovieQuizViewController: UIViewController {
-    private let questions: [QuizQuestion] = questionsMock
+    private let questionsAmount: Int = 10
+    private var questionFactory: QuestionFactoryProtocol = QuestionFactory()
+    private var currentQuestion: QuizQuestion?
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
-    
+
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
@@ -51,15 +21,35 @@ final class MovieQuizViewController: UIViewController {
     
     @IBAction private func answerButtonClicked(_ sender: UIButton) {
         let isYesClicked = sender.titleLabel?.text == "Да"
-        let currentQuestion = questions[currentQuestionIndex]
-        showAnswerResult(isCorrect: currentQuestion.correctAnswer == isYesClicked)
+        showAnswerResult(isCorrect: currentQuestion?.correctAnswer == isYesClicked)
+    }
+    
+    private func showNextQuestionOrResults() {
+        if currentQuestionIndex == questionsAmount - 1 {
+            let result = QuizResultsViewModel(
+                title: "Этот раунд окончен!",
+                text: "Ваш результат: \(correctAnswers)/\(questionsAmount)",
+                buttonText: "Сыграть ещё раз"
+            )
+            show(quiz: result)
+        } else {
+            currentQuestionIndex += 1
+            showQuestion()
+        }
+    }
+    
+    private func showQuestion() {
+        guard let question = questionFactory.requestNextQuestion() else { return }
+        currentQuestion = question
+        let viewModel = convert(model: question)
+        show(quiz: viewModel)
     }
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         return QuizStepViewModel(
             image: UIImage(named: model.image) ?? UIImage(),
             question: model.text,
-            questionNumber: "\(currentQuestionIndex + 1)/\(questions.count)"
+            questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)"
         )
     }
     
@@ -78,26 +68,6 @@ final class MovieQuizViewController: UIViewController {
             self.noButton.isEnabled = true
             self.yesButton.isEnabled = true
         }
-    }
-    
-    private func showNextQuestionOrResults() {
-        if currentQuestionIndex == questions.count - 1 {
-            let result = QuizResultsViewModel(
-                title: "Этот раунд окончен!",
-                text: "Ваш результат: \(correctAnswers)/\(questionsMock.count)",
-                buttonText: "Сыграть ещё раз"
-            )
-            show(quiz: result)
-        } else {
-            currentQuestionIndex += 1
-            showQuestion()
-        }
-    }
-    
-    private func showQuestion() {
-        let question = questions[currentQuestionIndex]
-        let viewModel = convert(model: question)
-        show(quiz: viewModel)
     }
     
     private func show(quiz step: QuizStepViewModel) {
