@@ -3,7 +3,8 @@ import UIKit
 
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private let questionsAmount: Int = 10
-    private var questionFactory: QuestionFactoryProtocol?
+    private lazy var questionFactory: QuestionFactoryProtocol = QuestionFactory()
+    private lazy var alertPresenter: AlertPresenterProtocol = AlertPresenter()
     private var currentQuestion: QuizQuestion?
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
@@ -21,9 +22,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        questionFactory = QuestionFactory()
-        questionFactory?.delegate = self
-        questionFactory?.requestNextQuestion()
+        questionFactory.delegate = self
+        questionFactory.requestNextQuestion()
     }
     
     func didReceiveNextQuestion(question: QuizQuestion?) {
@@ -37,15 +37,16 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
-            let result = QuizResultsViewModel(
+            let alertData = AlertModel(
                 title: "Этот раунд окончен!",
-                text: "Ваш результат: \(correctAnswers)/\(questionsAmount)",
-                buttonText: "Сыграть ещё раз"
+                message: "Ваш результат: \(correctAnswers)/\(questionsAmount)",
+                buttonText: "Сыграть ещё раз",
+                completion: { [weak self] _ in self?.resetGame() }
             )
-            show(quiz: result)
+            alertPresenter.showAlert(alertData: alertData, viewController: self)
         } else {
             currentQuestionIndex += 1
-            self.questionFactory?.requestNextQuestion()
+            self.questionFactory.requestNextQuestion()
         }
     }
     
@@ -81,16 +82,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         imageView.layer.borderWidth = 0
     }
     
-    private func show(quiz result: QuizResultsViewModel) {
-        let alert = UIAlertController(title:result.title, message: result.text, preferredStyle: .alert)
-        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
-            guard let self else { return }
-            self.currentQuestionIndex = 0
-            self.correctAnswers = 0
-            self.questionFactory?.requestNextQuestion()
-        }
-        alert.addAction(action)
-        self.present(alert, animated: true, completion: nil)
+    private func resetGame() {
+        self.currentQuestionIndex = 0
+        self.correctAnswers = 0
+        self.questionFactory.requestNextQuestion()
     }
-    
 }
