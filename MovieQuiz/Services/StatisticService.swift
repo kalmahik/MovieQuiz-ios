@@ -7,12 +7,21 @@ class StatisticService: StatisticServiceProtocol {
         case correct, total, bestGame, gamesCount
     }
     
-    var totalAccuracy: Double {
+    private var total: Int {
         get {
-            userDefaults.double(forKey: KeysToStore.total.rawValue)
+            userDefaults.integer(forKey: KeysToStore.total.rawValue)
         }
         set {
             userDefaults.set(newValue, forKey: KeysToStore.total.rawValue)
+        }
+    }
+    
+    private var correct: Int {
+        get {
+            userDefaults.integer(forKey: KeysToStore.correct.rawValue)
+        }
+        set {
+            userDefaults.set(newValue, forKey: KeysToStore.correct.rawValue)
         }
     }
     
@@ -20,7 +29,6 @@ class StatisticService: StatisticServiceProtocol {
         get {
             userDefaults.integer(forKey: KeysToStore.gamesCount.rawValue)
         }
-        
         set {
             userDefaults.set(newValue, forKey: KeysToStore.gamesCount.rawValue)
         }
@@ -34,10 +42,8 @@ class StatisticService: StatisticServiceProtocol {
             else {
                 return GameRecord(correct: 0, total: 0, date: Date())
             }
-            print(data, KeysToStore.bestGame.rawValue)
             return record
         }
-
         set {
             guard let data = try? JSONEncoder().encode(newValue) else {
                 return
@@ -46,12 +52,19 @@ class StatisticService: StatisticServiceProtocol {
         }
     }
     
+    var totalAccuracy: Double {
+        get {
+            return Double(correct) / Double(total) * 100
+        }
+    }
+    
     func store(correct count: Int, total amount: Int) {
-        gamesCount += 1
         let currentGame = GameRecord(correct: count, total: amount, date: Date())
         if (currentGame.isBetterThan(anotherGame: bestGame)) {
             bestGame = currentGame
         }
-        totalAccuracy = Double(count) / Double(amount)
+        gamesCount += 1
+        total = total + amount
+        correct = correct + count
     }
 }

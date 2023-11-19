@@ -2,13 +2,14 @@ import UIKit
 
 
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
-    private let questionsAmount: Int = 10
     private lazy var questionFactory: QuestionFactoryProtocol = QuestionFactory()
     private lazy var alertPresenter: AlertPresenterProtocol = AlertPresenter()
+    private lazy var statisticService: StatisticServiceProtocol = StatisticService()
+    private let questionsAmount: Int = 10
     private var currentQuestion: QuizQuestion?
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
-
+    
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
@@ -19,12 +20,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         let isYesClicked = sender.titleLabel?.text == "Да"
         showAnswerResult(isCorrect: currentQuestion?.correctAnswer == isYesClicked)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         questionFactory.delegate = self
         questionFactory.requestNextQuestion()
-        print(Bundle.main.bundlePath)
     }
     
     func didReceiveNextQuestion(question: QuizQuestion?) {
@@ -38,11 +38,18 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
+            statisticService.store(correct: correctAnswers, total: questionsAmount)
+            let bestGame = statisticService.bestGame
+            let message =
+            "Ваш результат: \(correctAnswers)/\(questionsAmount)\n" +
+            "Количество сыгранных квизов: \(statisticService.gamesCount)\n" +
+            "Рекорд: \(bestGame.correct)/\(bestGame.total) \(bestGame.date.dateTimeString)\n" +
+            "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
             let alertData = AlertModel(
                 title: "Этот раунд окончен!",
-                message: "Ваш результат: \(correctAnswers)/\(questionsAmount)",
+                message: message,
                 buttonText: "Сыграть ещё раз",
-                completion: { [weak self] _ in self?.resetGame() }
+                completion: resetGame
             )
             alertPresenter.showAlert(alertData: alertData, viewController: self)
         } else {
@@ -83,7 +90,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         imageView.layer.borderWidth = 0
     }
     
-    private func resetGame() {
+    private func resetGame(_: UIAlertAction) {
         self.currentQuestionIndex = 0
         self.correctAnswers = 0
         self.questionFactory.requestNextQuestion()
