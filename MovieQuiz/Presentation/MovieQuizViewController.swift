@@ -24,6 +24,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         super.viewDidLoad()
         questionFactory.delegate = self
         questionFactory.requestNextQuestion()
+        print(Bundle.main.bundlePath)
     }
     
     func didReceiveNextQuestion(question: QuizQuestion?) {
