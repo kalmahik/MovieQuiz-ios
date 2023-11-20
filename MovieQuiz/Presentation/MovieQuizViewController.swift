@@ -17,7 +17,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet private weak var yesButton: UIButton!
     
     @IBAction private func answerButtonClicked(_ sender: UIButton) {
-        let isYesClicked = sender.titleLabel?.text == "Да"
+        let isYesClicked = sender == yesButton
         showAnswerResult(isCorrect: currentQuestion?.correctAnswer == isYesClicked)
     }
     
