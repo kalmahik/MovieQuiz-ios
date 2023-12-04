@@ -16,7 +16,7 @@ class QuestionFactory: QuestionFactoryProtocol {
             do {
                 let imageData = try Data(contentsOf: movie.resizedImageURL)
                 let rating = Float(movie.rating) ?? 0
-                let ratingQuestion = Float.random(in: 7.7..<10)
+                let ratingQuestion = Float.random(in: 7.9..<9.4)
                 let text = String(format: "Рейтинг этого фильма больше чем %.2f?", ratingQuestion)
                 let correctAnswer = rating > ratingQuestion
                 let question = QuizQuestion(image: imageData, text: text, correctAnswer: correctAnswer)

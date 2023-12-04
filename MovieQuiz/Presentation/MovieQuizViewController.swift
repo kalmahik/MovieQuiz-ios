@@ -37,9 +37,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         currentQuestion = question
         let viewModel = convert(model: question)
         DispatchQueue.main.async { [weak self] in
-            self?.showQuestion(quiz: viewModel)
-            self?.hideLaunchScreen()
-            self?.hideLoadingIndicator()
+            guard let self else { return }
+            self.showQuestion(quiz: viewModel)
+            self.hideLaunchScreen()
+            self.hideLoadingIndicator()
         }
     }
     
@@ -118,12 +119,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     private func showLoadingIndicator() {
         activityIndicator.startAnimating()
-        activityIndicator.isHidden = false
     }
     
     private func hideLoadingIndicator() {
         activityIndicator.stopAnimating()
-        activityIndicator.isHidden = true
     }
     
     private func showLaunchScreen() {
