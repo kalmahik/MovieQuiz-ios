@@ -2,21 +2,49 @@ import Foundation
 
 class QuestionFactory: QuestionFactoryProtocol {
     weak var delegate: QuestionFactoryDelegate?
+    private let moviesLoader: MoviesLoadingProtocol
+    private var movies: [MostPopularMovie] = []
 
-    private let questionsMock: [QuizQuestion] = [
-        QuizQuestion(image: "The Godfather", text: "Рейтинг этого фильма больше чем 6?", correctAnswer: true),
-        QuizQuestion(image: "The Dark Knight", text: "Рейтинг этого фильма больше чем 6?", correctAnswer: true),
-        QuizQuestion(image: "Kill Bill", text: "Рейтинг этого фильма больше чем 6?", correctAnswer: true),
-        QuizQuestion(image: "The Avengers", text: "Рейтинг этого фильма больше чем 6?", correctAnswer: true),
-        QuizQuestion(image: "Deadpool", text: "Рейтинг этого фильма больше чем 6?", correctAnswer: true),
-        QuizQuestion(image: "The Green Knight", text: "Рейтинг этого фильма больше чем 6?", correctAnswer: true),
-        QuizQuestion(image: "Old", text: "Рейтинг этого фильма больше чем 6?", correctAnswer: false),
-        QuizQuestion(image: "The Ice Age Adventures of Buck Wild", text: "Рейтинг этого фильма больше чем 6?", correctAnswer: false),
-        QuizQuestion(image: "Tesla", text: "Рейтинг этого фильма больше чем 6?", correctAnswer: false),
-        QuizQuestion(image: "Vivarium", text: "Рейтинг этого фильма больше чем 6?", correctAnswer: false)
-    ]
-    
+    init(moviesLoader: MoviesLoadingProtocol, delegate: QuestionFactoryDelegate?) {
+        self.moviesLoader = moviesLoader
+        self.delegate = delegate
+    }
+
     func requestNextQuestion() {
-        delegate?.didReceiveNextQuestion(question: questionsMock.randomElement())
+        DispatchQueue.global().async { [weak self] in
+            guard let self, let movie = self.movies.randomElement() else { return }
+            do {
+                let imageData = try Data(contentsOf: movie.resizedImageURL)
+                let rating = Float(movie.rating) ?? 0
+                let ratingQuestion = Float.random(in: 7.9..<9.4)
+                let text = String(format: "Рейтинг этого фильма больше чем %.2f?", ratingQuestion)
+                let correctAnswer = rating > ratingQuestion
+                let question = QuizQuestion(image: imageData, text: text, correctAnswer: correctAnswer)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                    guard let self else { return }
+                    self.delegate?.didReceiveNextQuestion(question: question)
+                }
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
+                    self.delegate?.didFailNextQuestion(with: error)
+                }
+            }
+        }
+    }
+
+    func loadData() {
+        moviesLoader.loadMovies { [weak self] result in
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                switch result {
+                case .success(let mostPopularMovies):
+                    self.movies = mostPopularMovies.items
+                    self.delegate?.didLoadData()
+                case .failure(let error):
+                    self.delegate?.didFailData(with: error)
+                }
+            }
+        }
     }
 }
