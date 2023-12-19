@@ -84,14 +84,14 @@
 		7C8531502B02C2AD009546AF /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				7C8531512B02C2D4009546AF /* QuestionFactory.swift */,
-				7C85315A2B033075009546AF /* QuestionFactoryProtocol.swift */,
-				7C85315C2B034A80009546AF /* QuestionFactoryDelegate.swift */,
-				7C66D7812B0A107300B5A6AA /* StatisticServiceProtocol.swift */,
-				7CC2845F2B1CB48F00813FBB /* MoviesLoading.swift */,
-				7C66D7852B0A16C200B5A6AA /* StatisticService.swift */,
-				7CE6579D2B185FFB009D40F3 /* NetworkClient.swift */,
 				7CC9261E2B199D8A009D8C2E /* MoviesLoader.swift */,
+				7CC2845F2B1CB48F00813FBB /* MoviesLoading.swift */,
+				7CE6579D2B185FFB009D40F3 /* NetworkClient.swift */,
+				7C8531512B02C2D4009546AF /* QuestionFactory.swift */,
+				7C85315C2B034A80009546AF /* QuestionFactoryDelegate.swift */,
+				7C85315A2B033075009546AF /* QuestionFactoryProtocol.swift */,
+				7C66D7852B0A16C200B5A6AA /* StatisticService.swift */,
+				7C66D7812B0A107300B5A6AA /* StatisticServiceProtocol.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";

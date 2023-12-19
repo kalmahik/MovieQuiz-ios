@@ -1,5 +1,5 @@
 import UIKit
 
 protocol AlertPresenterProtocol {
-    func showAlert(alertData: AlertModel, viewController: UIViewController)
+    func showAlert(_ alertData: AlertModel, _ viewController: UIViewController?)
 }
