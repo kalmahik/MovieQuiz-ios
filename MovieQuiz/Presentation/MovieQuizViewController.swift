@@ -19,15 +19,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet private weak var launchScreen: UIImageView!
 
     @IBAction private func answerButtonClicked(_ sender: UIButton) {
-        let isYesClicked = sender == yesButton
-        let isCorrect = currentQuestion?.correctAnswer == isYesClicked
-        showAnswer(isCorrect: isCorrect)
-        correctAnswers = correctAnswers + (isCorrect ? 1 : 0)
-        showNextQuestionOrResults()
+        presenter.answerButtonClicked(sender, yesButton)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        presenter.viewController = self
         loadMovies(UIAlertAction())
     }
     
@@ -55,7 +52,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         showNetworkErrorModal(message: error.localizedDescription, handler: loadMovies)
     }
     
-    private func showNextQuestionOrResults() {
+    func showNextQuestionOrResults() {
         if presenter.isLastQuestion() {
             statisticService.store(correct: correctAnswers, total: presenter.questionsAmount)
             showFinishGameModal()
@@ -86,7 +83,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         alertPresenter.showAlert(alertData: alertData, viewController: self)
     }
     
-    private func showAnswer(isCorrect: Bool) {
+    func showAnswer(isCorrect: Bool) {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
