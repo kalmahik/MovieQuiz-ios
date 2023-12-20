@@ -17,18 +17,13 @@ class QuestionFactory: QuestionFactoryProtocol {
                 let imageData = try Data(contentsOf: movie.resizedImageURL)
                 let rating = Float(movie.rating) ?? 0
                 let ratingQuestion = Float.random(in: 7.9..<9.4)
-                let text = String(format: "Рейтинг этого фильма больше чем %.2f?", ratingQuestion)
-                let correctAnswer = rating > ratingQuestion
+                let moreLess = ["меньше", "больше"].randomElement()
+                let text = String(format: "Рейтинг этого фильма \(moreLess!) чем %.2f?", ratingQuestion)
+                let correctAnswer = moreLess == "больше" ? rating > ratingQuestion : rating < ratingQuestion
                 let question = QuizQuestion(image: imageData, text: text, correctAnswer: correctAnswer)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                    guard let self else { return }
-                    self.delegate?.didReceiveNextQuestion(question: question)
-                }
+                self.delegate?.didReceiveNextQuestion(question: question)
             } catch {
-                DispatchQueue.main.async { [weak self] in
-                    guard let self else { return }
-                    self.delegate?.didFailNextQuestion(with: error)
-                }
+                self.delegate?.didFailNextQuestion(with: error)
             }
         }
     }
@@ -36,13 +31,12 @@ class QuestionFactory: QuestionFactoryProtocol {
     func loadData() {
         moviesLoader.loadMovies { [weak self] result in
             DispatchQueue.main.async { [weak self] in
-                guard let self else { return }
                 switch result {
                 case .success(let mostPopularMovies):
-                    self.movies = mostPopularMovies.items
-                    self.delegate?.didLoadData()
+                    self?.movies = mostPopularMovies.items
+                    self?.delegate?.didLoadData()
                 case .failure(let error):
-                    self.delegate?.didFailData(with: error)
+                    self?.delegate?.didFailData(with: error)
                 }
             }
         }

@@ -19,6 +19,12 @@ final class MovieQuizViewController: UIViewController {
         super.viewDidLoad()
         presenter = MovieQuizPresenter(viewController: self)
     }
+    
+    func showNextQuestion(_ viewModel: QuizStepViewModel) {
+        showQuestion(quiz: viewModel)
+        hideLaunchScreen()
+        hideLoadingIndicator()
+    }
 
     func showAnswer(isCorrect: Bool) {
         imageView.layer.masksToBounds = true
@@ -48,5 +54,12 @@ final class MovieQuizViewController: UIViewController {
     
     func hideLaunchScreen() {
         launchScreen.isHidden = true
+    }
+    
+    func showAlert(_ alertData: AlertModel) {
+        let alert = UIAlertController(title: alertData.title, message: alertData.message, preferredStyle: .alert)
+        let action = UIAlertAction(title: alertData.buttonText, style: .default, handler: alertData.completion)
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
     }
 }

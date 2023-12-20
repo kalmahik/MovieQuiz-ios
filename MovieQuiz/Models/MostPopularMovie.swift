@@ -8,10 +8,7 @@ struct MostPopularMovie: Codable {
     var resizedImageURL: URL {
         let urlString = imageURL.absoluteString
         let imageUrlString = urlString.components(separatedBy: "._")[0] + "._V0_UX600_.jpg"
-        guard let newURL = URL(string: imageUrlString) else {
-            return imageURL
-        }
-        return newURL
+        return URL(string: imageUrlString) ?? imageURL
     }
 
     private enum CodingKeys: String, CodingKey {

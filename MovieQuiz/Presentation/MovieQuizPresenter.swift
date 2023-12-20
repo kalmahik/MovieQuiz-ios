@@ -3,8 +3,7 @@ import UIKit
 final class MovieQuizPresenter: QuestionFactoryDelegate {
     private weak var viewController: MovieQuizViewController?
     private var questionFactory: QuestionFactoryProtocol?
-    private var alertPresenter: AlertPresenterProtocol?
-    private var statisticService: StatisticServiceProtocol?
+    private let statisticService: StatisticServiceProtocol
 
     private let questionsAmount: Int = 10
     private var currentQuestion: QuizQuestion?
@@ -13,21 +12,17 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     init(viewController: MovieQuizViewController) {
         self.viewController = viewController
-        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
-        alertPresenter = AlertPresenter()
         statisticService = StatisticService()
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         loadMovies(UIAlertAction())
     }
     
     func didReceiveNextQuestion(question: QuizQuestion?) {
         guard let question else { return }
         currentQuestion = question
-        let viewModel = convert(model: question)
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            self.viewController?.showQuestion(quiz: viewModel)
-            self.viewController?.hideLaunchScreen()
-            self.viewController?.hideLoadingIndicator()
+        let questionModel = convert(model: question)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            self?.viewController?.showNextQuestion(questionModel)
         }
     }
     
@@ -36,7 +31,9 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     }
     
     func didFailNextQuestion(with error: Error) {
-        showNetworkErrorModal(message: error.localizedDescription, handler: loadQuestion)
+        DispatchQueue.main.async { [weak self] in
+            self?.showNetworkErrorModal(message: error.localizedDescription, handler: self?.loadQuestion)
+        }
     }
     
     func didFailData(with error: Error) {
@@ -53,7 +50,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     private func showNextQuestionOrResults() {
         if isLastQuestion() {
-            statisticService?.store(correct: correctAnswers, total: questionsAmount)
+            statisticService.store(correct: correctAnswers, total: questionsAmount)
             showFinishGameModal()
         } else {
             switchToNextQuestion()
@@ -62,7 +59,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     }
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
-        return QuizStepViewModel(
+        QuizStepViewModel(
             image: UIImage(data: model.image) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)"
@@ -88,19 +85,19 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         questionFactory?.loadData()
     }
     
-    private func loadQuestion(_: UIAlertAction) {
+    private func loadQuestion(_: UIAlertAction) -> Void {
         viewController?.showLoadingIndicator()
         questionFactory?.requestNextQuestion()
     }
     
-    private func showNetworkErrorModal(message: String, handler: @escaping (UIAlertAction) -> Void) {
+    private func showNetworkErrorModal(message: String, handler: ((UIAlertAction) -> Void)?) {
         let alertData = AlertModel(
             title: "Ошибка",
             message: message,
             buttonText: "Попробовать ещё раз",
             completion: handler
         )
-        alertPresenter?.showAlert(alertData, viewController)
+        viewController?.showAlert(alertData)
     }
     
     private func showFinishGameModal() {
@@ -111,11 +108,10 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             buttonText: "Сыграть ещё раз",
             completion: resetGame
         )
-        alertPresenter?.showAlert(alertData, viewController)
+        viewController?.showAlert(alertData)
     }
     
     private func generateFinisMessage() -> String {
-        guard let statisticService else { return "" }
         let bestGame = statisticService.bestGame
         let message =
         "Ваш результат: \(correctAnswers)/\(questionsAmount)\n" +
