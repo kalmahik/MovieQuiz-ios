@@ -28,13 +28,11 @@ final class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
     
     func hideLaunchScreen() {
         print("hideLaunchScreen")
-        
     }
     
     func showAlert(_ alertData: MovieQuiz.AlertModel) {
         print("showAlert")
-        
-    }    
+    }
 }
 
 final class MovieQuizPresenterTests: XCTestCase {
