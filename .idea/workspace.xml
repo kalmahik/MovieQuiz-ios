@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="db2a1c9c-073d-4331-adcc-4e19cf891c48" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MovieQuizUITests/MovieQuizUITests.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MovieQuiz.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/MovieQuiz.xcodeproj/project.pbxproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovieQuiz/Presentation/Base.lproj/Main.storyboard" beforeDir="false" afterPath="$PROJECT_DIR$/MovieQuiz/Presentation/Base.lproj/Main.storyboard" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MovieQuiz/Presentation/MovieQuizViewController.swift" beforeDir="false" afterPath="$PROJECT_DIR$/MovieQuiz/Presentation/MovieQuizViewController.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MovieQuiz/Services/QuestionFactory.swift" beforeDir="false" afterPath="$PROJECT_DIR$/MovieQuiz/Services/QuestionFactory.swift" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

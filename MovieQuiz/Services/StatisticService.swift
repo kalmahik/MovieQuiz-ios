@@ -45,9 +45,7 @@ class StatisticService: StatisticServiceProtocol {
             return record
         }
         set {
-            guard let data = try? JSONEncoder().encode(newValue) else {
-                return
-            }
+            guard let data = try? JSONEncoder().encode(newValue) else { return }
             userDefaults.set(data, forKey: KeysToStore.bestGame.rawValue)
         }
     }
