@@ -41,7 +41,6 @@
 		AD5EE5DE284D7887003966EF /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD5EE5DD284D7887003966EF /* UIColor+Extensions.swift */; };
 		AD77F5742857F8810062FB14 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD77F5732857F8810062FB14 /* Date+Extensions.swift */; };
 		F5BF84DE2B387506007CC292 /* MovieQuizPresenterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5BF84DD2B387506007CC292 /* MovieQuizPresenterProtocol.swift */; };
-		F5BF84E82B3878DF007CC292 /* MovieQuizTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5BF84E72B3878DF007CC292 /* MovieQuizTests.swift */; };
 		F5BF84EE2B3878EB007CC292 /* MovieQuizViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5BF84DF2B38788C007CC292 /* MovieQuizViewControllerTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -102,7 +101,6 @@
 		F5BF84DD2B387506007CC292 /* MovieQuizPresenterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieQuizPresenterProtocol.swift; sourceTree = "<group>"; };
 		F5BF84DF2B38788C007CC292 /* MovieQuizViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieQuizViewControllerTests.swift; sourceTree = "<group>"; };
 		F5BF84E52B3878DF007CC292 /* MovieQuizTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MovieQuizTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		F5BF84E72B3878DF007CC292 /* MovieQuizTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieQuizTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -247,7 +245,6 @@
 			isa = PBXGroup;
 			children = (
 				7C2957E32B39444E00233C5F /* ArrayTests.swift */,
-				F5BF84E72B3878DF007CC292 /* MovieQuizTests.swift */,
 				7C2957EB2B3950AA00233C5F /* MovieQuizViewControllerMock.swift */,
 				F5BF84DF2B38788C007CC292 /* MovieQuizViewControllerTests.swift */,
 				7C2957E72B3948E700233C5F /* MoviesLoaderTests.swift */,
@@ -431,7 +428,6 @@
 			files = (
 				7C2957E42B39444E00233C5F /* ArrayTests.swift in Sources */,
 				F5BF84EE2B3878EB007CC292 /* MovieQuizViewControllerTests.swift in Sources */,
-				F5BF84E82B3878DF007CC292 /* MovieQuizTests.swift in Sources */,
 				7C2957EA2B394EC600233C5F /* StubNetworkClient.swift in Sources */,
 				7C2957EC2B3950AA00233C5F /* MovieQuizViewControllerMock.swift in Sources */,
 				7C2957E82B3948E700233C5F /* MoviesLoaderTests.swift in Sources */,
