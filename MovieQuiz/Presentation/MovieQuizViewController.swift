@@ -12,7 +12,8 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     @IBOutlet private weak var launchScreen: UIImageView!
 
     @IBAction private func answerButtonClicked(_ sender: UIButton) {
-        presenter?.answerButtonClicked(sender, yesButton)
+        let isYesClicked = sender == yesButton
+        presenter?.answerButtonClicked(isYesClicked)
     }
     
     override func viewDidLoad() {
@@ -21,9 +22,11 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     }
     
     func showNextQuestion(_ viewModel: QuizStepViewModel) {
-        showQuestion(quiz: viewModel)
-        hideLaunchScreen()
-        hideLoadingIndicator()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            self?.showQuestion(quiz: viewModel)
+            self?.hideLaunchScreen()
+            self?.hideLoadingIndicator()
+        }
     }
 
     func showAnswer(isCorrect: Bool) {
@@ -35,7 +38,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     
     func showQuestion(quiz step: QuizStepViewModel) {
         counterLabel.text = step.questionNumber
-        imageView.image = step.image
+        imageView.image = UIImage(data: step.image) ?? UIImage()
         textLabel.text = step.question
         imageView.layer.borderWidth = 0
     }
@@ -58,9 +61,14 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     
     func showAlert(_ alertData: AlertModel) {
         let alert = UIAlertController(title: alertData.title, message: alertData.message, preferredStyle: .alert)
-        let action = UIAlertAction(title: alertData.buttonText, style: .default, handler: alertData.completion)
+        func handler(_: UIAlertAction) {
+            alertData.completion()
+        }
+        let action = UIAlertAction(title: alertData.buttonText, style: .default, handler: handler)
         alert.addAction(action)
         alert.view.accessibilityIdentifier = "Alert"
-        present(alert, animated: true, completion: nil)
+        DispatchQueue.main.async { [weak self] in
+            self?.present(alert, animated: true, completion: nil)
+        }
     }
 }
