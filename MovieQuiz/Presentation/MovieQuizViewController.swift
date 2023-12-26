@@ -60,6 +60,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         let alert = UIAlertController(title: alertData.title, message: alertData.message, preferredStyle: .alert)
         let action = UIAlertAction(title: alertData.buttonText, style: .default, handler: alertData.completion)
         alert.addAction(action)
+        alert.view.accessibilityIdentifier = "Alert"
         present(alert, animated: true, completion: nil)
     }
 }
