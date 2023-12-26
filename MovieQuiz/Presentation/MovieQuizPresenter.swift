@@ -4,12 +4,12 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     private weak var viewController: MovieQuizViewControllerProtocol?
     private var questionFactory: QuestionFactoryProtocol?
     private let statisticService: StatisticServiceProtocol
-
+    
     private var currentQuestion: QuizQuestion?
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
     private let questionsAmount: Int = 10
-
+    
     init(viewController: MovieQuizViewControllerProtocol) {
         self.viewController = viewController
         statisticService = StatisticService()
@@ -114,10 +114,12 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     private func generateFinisMessage() -> String {
         let bestGame = statisticService.bestGame
         let message =
-        "Ваш результат: \(correctAnswers)/\(questionsAmount)\n" +
-        "Количество сыгранных квизов: \(statisticService.gamesCount)\n" +
-        "Рекорд: \(bestGame.correct)/\(bestGame.total) \(bestGame.date.dateTimeString)\n" +
-        "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
+        """
+        Ваш результат: \(correctAnswers)/\(questionsAmount)
+        "Количество сыгранных квизов: \(statisticService.gamesCount)
+        "Рекорд: \(bestGame.correct)/\(bestGame.total) \(bestGame.date.dateTimeString)
+        "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%
+        """
         return message
     }
 }
