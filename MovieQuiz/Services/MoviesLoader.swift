@@ -3,7 +3,7 @@ import Foundation
 struct MoviesLoader: MoviesLoadingProtocol {
     private let networkClient: NetworkRouting
     private let API_TOKEN = "k_zcuw1ytf"
-    private let BASE_API_URL = "https://imdb-api.com/en/API/"
+    private let BASE_API_URL = "https://tv-api.com/en/API/"
     
     init(networkClient: NetworkRouting = NetworkClient()) {
         self.networkClient = networkClient
